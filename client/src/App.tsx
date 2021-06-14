@@ -26,7 +26,7 @@ function App() {
         <img
           src={`data:image/jpeg;base64,${image}`}
           alt="generator"
-          style={{width: '200px', height: '200px'}}
+          style={{width: '175px', height: '175px'}}
         />
       ) : null}
       <br />
