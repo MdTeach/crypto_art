@@ -9,7 +9,7 @@ contract('Token Deployment', async (accounts) => {
     contract = await ArtNFT.deployed();
   });
 
-  describe.skip('Token Deployment', () => {
+  describe('Token Deployment', () => {
     it('has correct name & token', async () => {
       const [expectedName, expectedToken] = ['CryptoArt', 'CART'];
       const tokenName = await contract.name();
@@ -29,7 +29,6 @@ contract('Token Deployment', async (accounts) => {
         'ipfs://ipfs.io/ipfs/bafybeieu5yrwl3agtl4tfinendjmpw4blsf4wps7g7knrwj22vr3xxagmy';
       const {logs} = await contract.createCollectible(tokenURI);
       const {from, to, tokenId} = logs[0].args;
-      console.log('event');
       assert.strictEqual(
         logs[0].event,
         'Transfer',
