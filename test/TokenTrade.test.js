@@ -1,4 +1,6 @@
 const assert = require('assert');
+const {expect} = require('chai');
+
 const ArtNFT = artifacts.require('ArtNFT.sol');
 const TradeNFT = artifacts.require('TradeNFT.sol');
 
@@ -41,14 +43,15 @@ contract('NFT Token Trade', async (accounts) => {
     });
   });
 
-  describe.skip('User can list the token for sale', async () => {
+  describe('User can list the token for sale', async () => {
     const [user1, user2] = accounts;
+
     it('can list token for sale', async () => {
       token_id = await nftMint(user1);
       selling_price = 0.001 * ETHER;
 
       // approve the smart contract to sell NFT
-      _ = await nftContract.approve(tradeContract.address, tokenId);
+      await nftContract.approve(tradeContract.address, tokenId);
 
       let {logs} = await tradeContract.listForSale(token_id, selling_price, {
         from: user1,
@@ -64,8 +67,52 @@ contract('NFT Token Trade', async (accounts) => {
       assert.strictEqual(
         receivedPrice.toNumber(),
         selling_price,
-        'Correct price wasnot set',
+        'Correct price was not set',
       );
+    });
+
+    it('cannot list the item for 0', async () => {
+      token_id = await nftMint(user1);
+      selling_price = 0 * ETHER;
+
+      // approve the smart contract to sell NFT
+      await nftContract.approve(tradeContract.address, tokenId);
+
+      try {
+        await tradeContract.listForSale(token_id, selling_price, {
+          from: user1,
+        });
+        assert.fail();
+      } catch (err) {
+        console.log('err was\n\n', err);
+        expect(err.message).to.match(
+          /revert/,
+          'Err:transaction was not reverted',
+        );
+      }
+    });
+
+    it('cannot list the item which is already listed', async () => {
+      token_id = await nftMint(user1);
+      selling_price = 0.001 * ETHER;
+
+      // approve the smart contract to sell NFT
+      await nftContract.approve(tradeContract.address, tokenId);
+      await tradeContract.listForSale(token_id, selling_price, {
+        from: user1,
+      });
+
+      try {
+        await tradeContract.listForSale(token_id, selling_price, {
+          from: user1,
+        });
+        assert.fail();
+      } catch (err) {
+        expect(err.message).to.match(
+          /revert/,
+          'Err:transaction was not reverted',
+        );
+      }
     });
   });
 });

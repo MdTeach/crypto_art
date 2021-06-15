@@ -22,5 +22,8 @@
   "homepage": "https://github.com/MdTeach/crypto_art#readme",
   "devDependencies": {
     "@openzeppelin/contracts": "^4.1.0"
+  },
+  "dependencies": {
+    "chai": "^4.3.4"
   }
 }

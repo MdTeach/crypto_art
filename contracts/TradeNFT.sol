@@ -12,13 +12,19 @@ contract TradeNFT {
         public
         returns (bool)
     {
+        require(_sellingPrice != 0, 'Err: Cannot sale for zero value');
+        // token is not for sale already
+        require(
+            tokensForSale[_tokenId] == 0,
+            'Err: Contract is already for sale'
+        );
+        // contract has permission to sale
         require(
             artNFT.getApproved(_tokenId) == address(this),
             'Err: Contract is not given approval to sale the token'
         );
 
         tokensForSale[_tokenId] = _sellingPrice;
-
         emit ListedForSale(_tokenId, _sellingPrice);
         return true;
     }
