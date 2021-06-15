@@ -43,7 +43,7 @@ contract('NFT Token Trade', async (accounts) => {
     });
   });
 
-  describe('User can list the token for sale', async () => {
+  describe.skip('User can list the token for sale', async () => {
     const [user1, user2] = accounts;
 
     it('can list token for sale', async () => {
@@ -114,5 +114,48 @@ contract('NFT Token Trade', async (accounts) => {
         );
       }
     });
+  });
+
+  describe.skip('User can buy the token for sale', async () => {
+    // user2 mints and lists for sale
+    // user3 purchases the token
+    const [user1, user2, user3] = accounts;
+
+    it('can buy item for sale', async () => {
+      const tokenId = await nftMint(user1);
+      const selling_price = 0.001 * ETHER;
+
+      // approve the smart contract to sell NFT
+      await nftContract.approve(tradeContract.address, tokenId);
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: user1,
+      });
+
+      const {logs} = await tradeContract.buyToken(tokenId, {
+        from: user2,
+        value: selling_price,
+      });
+      console.log('Txn log abishek\n\n', logs);
+
+      // assert the balance of seller added
+      const user1_bal2 = await web3.eth.getBalance(user1);
+      console.log('user1_bal2', user1_bal2);
+      // assert.strictEqual;
+      // assert balance of receiver deducted
+
+      // check if ownership is transfered
+      const newOwner = await nftContract.ownerOf(tokenId);
+      assert.strictEqual(
+        newOwner,
+        user2,
+        'Err:ownership of token not transfered',
+      );
+      assert.fail('All good');
+    });
+
+    // it('can only buy existing token', async () => {});
+    // it('canot buy item which is not for sale', async () => {});
+    // it('conont buy the items with less than listed price', async () => {});
+    // it('refunds the extra token back to the buyer', async () => {});
   });
 });

@@ -29,6 +29,14 @@ contract TradeNFT {
         return true;
     }
 
+    function buyToken(uint256 _tokenId) public payable returns (bool) {
+        require(
+            msg.value >= tokensForSale[_tokenId],
+            'Err: value sent insufficent to buy'
+        );
+        return true;
+    }
+
     function getItemPrice(uint256 _tokenId) public view returns (uint256) {
         require(
             tokensForSale[_tokenId] != 0,
