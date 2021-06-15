@@ -8,8 +8,17 @@ contract TradeNFT {
 
     event ListedForSale(uint256 _tokenId, uint256 _sellingPrice);
 
+    modifier OnlyTokenOwner(uint256 _tokenId, address _user) {
+        require(
+            _user == artNFT.ownerOf(_tokenId),
+            'Err: only token owner can execute this'
+        );
+        _;
+    }
+
     function listForSale(uint256 _tokenId, uint256 _sellingPrice)
         public
+        OnlyTokenOwner(_tokenId, msg.sender)
         returns (bool)
     {
         require(_sellingPrice != 0, 'Err: Cannot sale for zero value');
@@ -30,10 +39,12 @@ contract TradeNFT {
     }
 
     function buyToken(uint256 _tokenId) public payable returns (bool) {
-        require(
-            msg.value >= tokensForSale[_tokenId],
-            'Err: value sent insufficent to buy'
-        );
+        uint256 _price = tokensForSale[_tokenId];
+        require(msg.value >= _price, 'Err: value sent insufficent to buy');
+
+        // send ether to the seller
+        address payable _seller = payable(artNFT.ownerOf(_tokenId));
+        _seller.transfer(_price);
         return true;
     }
 

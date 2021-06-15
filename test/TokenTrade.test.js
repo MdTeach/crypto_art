@@ -4,6 +4,8 @@ const {expect} = require('chai');
 const ArtNFT = artifacts.require('ArtNFT.sol');
 const TradeNFT = artifacts.require('TradeNFT.sol');
 
+const AssertNearlyEqual = require('./utils/AssertNearlyEqual');
+
 contract('NFT Token Trade', async (accounts) => {
   const ETHER = Math.pow(10, 18);
   const zero_address = '0x0000000000000000000000000000000000000000';
@@ -44,7 +46,7 @@ contract('NFT Token Trade', async (accounts) => {
   });
 
   describe.skip('User can list the token for sale', async () => {
-    const [user1, user2] = accounts;
+    const [user1, seller] = accounts;
 
     it('can list token for sale', async () => {
       token_id = await nftMint(user1);
@@ -84,7 +86,6 @@ contract('NFT Token Trade', async (accounts) => {
         });
         assert.fail();
       } catch (err) {
-        console.log('err was\n\n', err);
         expect(err.message).to.match(
           /revert/,
           'Err:transaction was not reverted',
@@ -114,40 +115,78 @@ contract('NFT Token Trade', async (accounts) => {
         );
       }
     });
-  });
 
-  describe.skip('User can buy the token for sale', async () => {
-    // user2 mints and lists for sale
-    // user3 purchases the token
-    const [user1, user2, user3] = accounts;
-
-    it('can buy item for sale', async () => {
-      const tokenId = await nftMint(user1);
-      const selling_price = 0.001 * ETHER;
+    it('allows only owner to set token for sale', async () => {
+      token_id = await nftMint(user1);
+      selling_price = 0.0001 * ETHER;
 
       // approve the smart contract to sell NFT
       await nftContract.approve(tradeContract.address, tokenId);
-      await tradeContract.listForSale(tokenId, selling_price, {
+
+      // thows error when other user tries to listforsale
+      try {
+        await tradeContract.listForSale(token_id, selling_price, {
+          from: seller,
+        });
+        assert.fail();
+      } catch (err) {
+        expect(err.message).to.match(
+          /revert/,
+          'Err:transaction was not reverted',
+        );
+      }
+
+      // owner can safely list for sale
+      await tradeContract.listForSale(token_id, selling_price, {
         from: user1,
       });
+    });
+  });
 
-      const {logs} = await tradeContract.buyToken(tokenId, {
-        from: user2,
+  describe('User can buy the token listed for sale', async () => {
+    // seller mints and lists for sale
+    // buyer purchases the token
+    const [user1, seller, buyer] = accounts;
+
+    it('can buy item for sale', async () => {
+      const tokenId = await nftMint(seller);
+      const selling_price = 0.00001 * ETHER;
+
+      // approve the smart contract to sell NFT
+      await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: seller,
+      });
+
+      const seller_bal1 = await web3.eth.getBalance(seller);
+      const buyer_bal1 = await web3.eth.getBalance(buyer);
+      // buying nft transaction
+      const {tx, receipt} = await tradeContract.buyToken(tokenId, {
+        from: buyer,
         value: selling_price,
       });
-      console.log('Txn log abishek\n\n', logs);
 
       // assert the balance of seller added
-      const user1_bal2 = await web3.eth.getBalance(user1);
-      console.log('user1_bal2', user1_bal2);
-      // assert.strictEqual;
+      const seller_bal2 = await web3.eth.getBalance(seller);
+      AssertNearlyEqual(
+        parseInt(seller_bal2),
+        parseInt(seller_bal1) + selling_price,
+      );
+
+      // TODO: Write test suite for the buyer balance reduction //
       // assert balance of receiver deducted
+      let buyer_bal2 = await web3.eth.getBalance(buyer);
+      const {gasUsed} = receipt;
+      const {gasPrice} = await web3.eth.getTransaction(tx);
+      const gasFee = gasUsed * gasPrice; //wei
+      // buyer_bal2 = buyer_bal2.parseInt();
+      assert.fail('all good');
 
       // check if ownership is transfered
       const newOwner = await nftContract.ownerOf(tokenId);
       assert.strictEqual(
         newOwner,
-        user2,
+        seller,
         'Err:ownership of token not transfered',
       );
       assert.fail('All good');
