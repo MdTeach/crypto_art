@@ -24,7 +24,7 @@ contract('NFT Token Trade', async (accounts) => {
     return tokenId;
   };
 
-  describe('Contract Deployment', () => {
+  describe.skip('Contract Deployment', () => {
     beforeEach(async () => {
       nftContract = await ArtNFT.new();
       tradeContract = await TradeNFT.new(nftContract.address);
@@ -44,7 +44,7 @@ contract('NFT Token Trade', async (accounts) => {
     });
   });
 
-  describe('User can list the token for sale', async () => {
+  describe.skip('User can list the token for sale', async () => {
     beforeEach(async () => {
       nftContract = await ArtNFT.new();
       tradeContract = await TradeNFT.new(nftContract.address);
@@ -228,8 +228,31 @@ contract('NFT Token Trade', async (accounts) => {
         value: selling_price,
       });
     });
-    // it('canot buy item which is not for sale', async () => {});
-    // it('conont buy the items with less than listed price', async () => {});
+
+    it('can not buy NFT lower the listed price', async () => {
+      const tokenId = await nftMint(seller);
+      const selling_price = 0.002 * ETHER;
+
+      // approve the smart contract to sell NFT
+      await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: seller,
+      });
+
+      // can't buy at less
+      await assertHelper.ExpectRevert(async () => {
+        await tradeContract.buyToken(tokenId, {
+          from: buyer,
+          value: selling_price / 2,
+        });
+      });
+
+      // can buy at correct or higher
+      await tradeContract.buyToken(tokenId, {
+        from: buyer,
+        value: selling_price * 2,
+      });
+    });
     // it('refunds the extra token back to the buyer', async () => {});
   });
 });
