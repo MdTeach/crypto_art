@@ -15,12 +15,6 @@ contract('NFT Token Trade', async (accounts) => {
   let nftContract;
   let tradeContract;
 
-  before(async () => {
-    nftContract = await ArtNFT.deployed();
-    tradeContract = await TradeNFT.deployed(nftContract.address);
-    // tradeContract = await TradeNFT.deployed();
-  });
-
   // helper function
   const nftMint = async (sender) => {
     const {logs} = await nftContract.createCollectible(token_uri, {
@@ -30,7 +24,12 @@ contract('NFT Token Trade', async (accounts) => {
     return tokenId;
   };
 
-  describe.skip('Contract Deployment', () => {
+  describe('Contract Deployment', () => {
+    beforeEach(async () => {
+      nftContract = await ArtNFT.new();
+      tradeContract = await TradeNFT.new(nftContract.address);
+    });
+
     it('is deployed', async () => {
       assert.notStrictEqual(
         nftContract.address,
@@ -45,7 +44,12 @@ contract('NFT Token Trade', async (accounts) => {
     });
   });
 
-  describe.skip('User can list the token for sale', async () => {
+  describe('User can list the token for sale', async () => {
+    beforeEach(async () => {
+      nftContract = await ArtNFT.new();
+      tradeContract = await TradeNFT.new(nftContract.address);
+    });
+
     const [user1, seller] = accounts;
 
     it('can list token for sale', async () => {
@@ -79,18 +83,11 @@ contract('NFT Token Trade', async (accounts) => {
 
       // approve the smart contract to sell NFT
       await nftContract.approve(tradeContract.address, tokenId);
-
-      try {
+      assertHelper.ExpectRevert(async () => {
         await tradeContract.listForSale(token_id, selling_price, {
           from: user1,
         });
-        assert.fail();
-      } catch (err) {
-        expect(err.message).to.match(
-          /revert/,
-          'Err:transaction was not reverted',
-        );
-      }
+      });
     });
 
     it('cannot list the item which is already listed', async () => {
@@ -144,11 +141,16 @@ contract('NFT Token Trade', async (accounts) => {
   });
 
   describe('User can buy the token listed for sale', async () => {
+    beforeEach(async () => {
+      nftContract = await ArtNFT.new();
+      tradeContract = await TradeNFT.new(nftContract.address);
+    });
+
     // seller mints and lists for sale
     // buyer purchases the token
     const [_, seller, buyer] = accounts;
 
-    it.skip('can buy item for sale', async () => {
+    it('can buy item for sale', async () => {
       const tokenId = await nftMint(seller);
       const selling_price = 0.001 * ETHER;
 
@@ -190,32 +192,38 @@ contract('NFT Token Trade', async (accounts) => {
       const newOwner = await nftContract.ownerOf(tokenId);
       assert.strictEqual(
         newOwner,
-        seller,
+        buyer,
         'Err:ownership of token not transfered',
       );
-      assert.fail('All good');
     });
 
     it('can only buy existing token', async () => {
       const selling_price = 0.001 * ETHER;
 
-      // buying unexisting nft transaction
-      const {tx, receipt} = await tradeContract.buyToken(tokenId, {
-        from: buyer,
-        value: selling_price,
+      // canot buy unexisting nft
+      await assertHelper.ExpectRevert(async () => {
+        await tradeContract.buyToken(0, {
+          from: buyer,
+          value: selling_price,
+        });
       });
 
-      assert.fail('All good');
       const tokenId = await nftMint(seller);
-
-      // approve the smart contract to sell NFT
       await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+
+      // canot buy unlisted nft
+      await assertHelper.ExpectRevert(async () => {
+        await tradeContract.buyToken(tokenId, {
+          from: buyer,
+          value: selling_price,
+        });
+      });
       await tradeContract.listForSale(tokenId, selling_price, {
         from: seller,
       });
 
       // buying nft transaction
-      const {tx, receipt} = await tradeContract.buyToken(tokenId, {
+      await tradeContract.buyToken(tokenId, {
         from: buyer,
         value: selling_price,
       });

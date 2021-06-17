@@ -41,10 +41,14 @@ contract TradeNFT {
     function buyToken(uint256 _tokenId) public payable returns (bool) {
         uint256 _price = tokensForSale[_tokenId];
         require(msg.value >= _price, 'Err: value sent insufficent to buy');
+        require(_price > 0, 'Err: token is not listed for sale');
 
         // send ether to the seller
         address payable _seller = payable(artNFT.ownerOf(_tokenId));
         _seller.transfer(_price);
+
+        // tranfer NFT to the buyer
+        artNFT.safeTransferFrom(_seller, msg.sender, _tokenId);
         return true;
     }
 
