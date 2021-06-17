@@ -4,9 +4,15 @@ import './ArtNFT.sol';
 
 contract TradeNFT {
     ArtNFT private artNFT;
-    mapping(uint256 => uint256) tokensForSale;
+    mapping(uint256 => uint256) public tokensForSale;
 
     event ListedForSale(uint256 _tokenId, uint256 _sellingPrice);
+    event TokenSold(
+        uint256 _tokenId,
+        uint256 _sellingPrice,
+        address _buyer,
+        address _seller
+    );
 
     modifier OnlyTokenOwner(uint256 _tokenId, address _user) {
         require(
@@ -23,6 +29,10 @@ contract TradeNFT {
 
         //refund
         payable(msg.sender).transfer(amountToRefund);
+    }
+    modifier resetTokenSale(uint256 _tokenId) {
+        _;
+        tokensForSale[_tokenId] = 0;
     }
 
     function listForSale(uint256 _tokenId, uint256 _sellingPrice)
@@ -47,7 +57,12 @@ contract TradeNFT {
         return true;
     }
 
-    function buyToken(uint256 _tokenId) public payable refundExcess(_tokenId) {
+    function buyToken(uint256 _tokenId)
+        public
+        payable
+        resetTokenSale(_tokenId)
+        refundExcess(_tokenId)
+    {
         uint256 _price = tokensForSale[_tokenId];
         require(msg.value >= _price, 'Err: value sent insufficent to buy');
         require(_price > 0, 'Err: token is not listed for sale');
@@ -58,6 +73,8 @@ contract TradeNFT {
 
         // tranfer NFT to the buyer
         artNFT.safeTransferFrom(_seller, msg.sender, _tokenId);
+
+        emit TokenSold(_tokenId, _price, msg.sender, _seller);
     }
 
     function getItemPrice(uint256 _tokenId) public view returns (uint256) {
@@ -65,7 +82,6 @@ contract TradeNFT {
             tokensForSale[_tokenId] != 0,
             'Err: The item is not listed for sale'
         );
-
         return tokensForSale[_tokenId];
     }
 

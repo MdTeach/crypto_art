@@ -150,7 +150,7 @@ contract('NFT Token Trade', async (accounts) => {
     // buyer purchases the token
     const [_, seller, buyer] = accounts;
 
-    it('can buy item for sale', async () => {
+    it.skip('can buy item for sale', async () => {
       const tokenId = await nftMint(seller);
       const selling_price = 0.001 * ETHER;
 
@@ -197,7 +197,7 @@ contract('NFT Token Trade', async (accounts) => {
       );
     });
 
-    it('can only buy existing token', async () => {
+    it.skip('can only buy existing token', async () => {
       const selling_price = 0.001 * ETHER;
 
       // canot buy unexisting nft
@@ -229,7 +229,7 @@ contract('NFT Token Trade', async (accounts) => {
       });
     });
 
-    it('can not buy NFT lower the listed price', async () => {
+    it.skip('can not buy NFT lower the listed price', async () => {
       const tokenId = await nftMint(seller);
       const selling_price = 0.002 * ETHER;
 
@@ -254,7 +254,7 @@ contract('NFT Token Trade', async (accounts) => {
       });
     });
 
-    it('refunds the extra token back to the buyer', async () => {
+    it.skip('refunds the extra token back to the buyer', async () => {
       const tokenId = await nftMint(seller);
       const selling_price = 0.002 * ETHER;
       const sending_amt = 0.005 * ETHER;
@@ -278,8 +278,49 @@ contract('NFT Token Trade', async (accounts) => {
       const buyer_bal2 = await web3.eth.getBalance(buyer).then(parseInt);
 
       const expected_remaning_bal = buyer_bal1 - selling_price - gasFee;
-      const delta = buyer_bal2 - expected_remaning_bal;
       assertHelper.AssertNearlyEqual(buyer_bal2, expected_remaning_bal);
+    });
+
+    it.skip('logs the buy event', async () => {
+      const tokenId = await nftMint(seller);
+      const selling_price = 0.002 * ETHER;
+
+      // approve the smart contract to sell NFT
+      await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: seller,
+      });
+
+      // can buy at correct or higher
+      const {logs} = await tradeContract.buyToken(tokenId, {
+        from: buyer,
+        value: selling_price,
+      });
+      assert.strictEqual(logs.length, 1, 'Only one even shall be trigerred');
+      assert.strictEqual('TokenSold', logs[0].event);
+    });
+
+    it('after selling the item is removed from sale', async () => {
+      const tokenId = await nftMint(seller);
+      const selling_price = 0.002 * ETHER;
+
+      // approve the smart contract to sell NFT
+      await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: seller,
+      });
+
+      // can buy at correct or higher
+      txn = await tradeContract.buyToken(tokenId, {
+        from: buyer,
+        value: selling_price,
+      });
+
+      console.log('Abishek \n buy passed');
+      // after buying item is not for sale
+      await assertHelper.ExpectRevert(async () => {
+        await tradeContract.getItemPrice(tokenId);
+      });
     });
   });
 });
