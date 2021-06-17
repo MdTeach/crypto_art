@@ -253,6 +253,31 @@ contract('NFT Token Trade', async (accounts) => {
         value: selling_price * 2,
       });
     });
-    // it('refunds the extra token back to the buyer', async () => {});
+
+    it('refunds the extra token back to the buyer', async () => {
+      const tokenId = await nftMint(seller);
+      const selling_price = 0.002 * ETHER;
+      const sending_amt = 0.005 * ETHER;
+
+      // approve the smart contract to sell NFT
+      await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: seller,
+      });
+
+      // can buy at higher
+      const buyer_bal1 = await web3.eth.getBalance(buyer);
+      const {tx, receipt} = await tradeContract.buyToken(tokenId, {
+        from: buyer,
+        value: sending_amt,
+      });
+
+      const {gasUsed} = receipt;
+      const {gasPrice} = await web3.eth.getTransaction(tx);
+      const gasFee = gasUsed * gasPrice; //wei
+      console.log('gas gee', gasFee, typeof gasFee);
+      assert.fail('All good :D');
+      const buyer_bal2 = await web3.eth.getBalance(buyer);
+    });
   });
 });
