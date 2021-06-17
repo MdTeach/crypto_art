@@ -24,7 +24,7 @@ contract('NFT Token Trade', async (accounts) => {
     return tokenId;
   };
 
-  describe.skip('Contract Deployment', () => {
+  describe('Contract Deployment', () => {
     beforeEach(async () => {
       nftContract = await ArtNFT.new();
       tradeContract = await TradeNFT.new(nftContract.address);
@@ -44,7 +44,7 @@ contract('NFT Token Trade', async (accounts) => {
     });
   });
 
-  describe.skip('User can list the token for sale', async () => {
+  describe('User can list the token for sale', async () => {
     beforeEach(async () => {
       nftContract = await ArtNFT.new();
       tradeContract = await TradeNFT.new(nftContract.address);
@@ -150,7 +150,7 @@ contract('NFT Token Trade', async (accounts) => {
     // buyer purchases the token
     const [_, seller, buyer] = accounts;
 
-    it.skip('can buy item for sale', async () => {
+    it('can buy item for sale', async () => {
       const tokenId = await nftMint(seller);
       const selling_price = 0.001 * ETHER;
 
@@ -197,7 +197,7 @@ contract('NFT Token Trade', async (accounts) => {
       );
     });
 
-    it.skip('can only buy existing token', async () => {
+    it('can only buy existing token', async () => {
       const selling_price = 0.001 * ETHER;
 
       // canot buy unexisting nft
@@ -229,7 +229,7 @@ contract('NFT Token Trade', async (accounts) => {
       });
     });
 
-    it.skip('can not buy NFT lower the listed price', async () => {
+    it('can not buy NFT lower the listed price', async () => {
       const tokenId = await nftMint(seller);
       const selling_price = 0.002 * ETHER;
 
@@ -254,7 +254,7 @@ contract('NFT Token Trade', async (accounts) => {
       });
     });
 
-    it.skip('refunds the extra token back to the buyer', async () => {
+    it('refunds the extra token back to the buyer', async () => {
       const tokenId = await nftMint(seller);
       const selling_price = 0.002 * ETHER;
       const sending_amt = 0.005 * ETHER;
@@ -281,7 +281,7 @@ contract('NFT Token Trade', async (accounts) => {
       assertHelper.AssertNearlyEqual(buyer_bal2, expected_remaning_bal);
     });
 
-    it.skip('logs the buy event', async () => {
+    it('logs the buy event', async () => {
       const tokenId = await nftMint(seller);
       const selling_price = 0.002 * ETHER;
 
