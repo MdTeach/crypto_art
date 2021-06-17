@@ -16,6 +16,15 @@ contract TradeNFT {
         _;
     }
 
+    modifier refundExcess(uint256 _tokenId) {
+        _;
+        uint256 _price = tokensForSale[_tokenId];
+        uint256 amountToRefund = msg.value - _price;
+
+        //refund
+        payable(msg.sender).transfer(amountToRefund);
+    }
+
     function listForSale(uint256 _tokenId, uint256 _sellingPrice)
         public
         OnlyTokenOwner(_tokenId, msg.sender)
@@ -38,7 +47,7 @@ contract TradeNFT {
         return true;
     }
 
-    function buyToken(uint256 _tokenId) public payable returns (bool) {
+    function buyToken(uint256 _tokenId) public payable refundExcess(_tokenId) {
         uint256 _price = tokensForSale[_tokenId];
         require(msg.value >= _price, 'Err: value sent insufficent to buy');
         require(_price > 0, 'Err: token is not listed for sale');
@@ -49,7 +58,6 @@ contract TradeNFT {
 
         // tranfer NFT to the buyer
         artNFT.safeTransferFrom(_seller, msg.sender, _tokenId);
-        return true;
     }
 
     function getItemPrice(uint256 _tokenId) public view returns (uint256) {

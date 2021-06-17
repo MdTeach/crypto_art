@@ -266,7 +266,7 @@ contract('NFT Token Trade', async (accounts) => {
       });
 
       // can buy at higher
-      const buyer_bal1 = await web3.eth.getBalance(buyer);
+      const buyer_bal1 = await web3.eth.getBalance(buyer).then(parseInt);
       const {tx, receipt} = await tradeContract.buyToken(tokenId, {
         from: buyer,
         value: sending_amt,
@@ -275,9 +275,11 @@ contract('NFT Token Trade', async (accounts) => {
       const {gasUsed} = receipt;
       const {gasPrice} = await web3.eth.getTransaction(tx);
       const gasFee = gasUsed * gasPrice; //wei
-      console.log('gas gee', gasFee, typeof gasFee);
-      assert.fail('All good :D');
-      const buyer_bal2 = await web3.eth.getBalance(buyer);
+      const buyer_bal2 = await web3.eth.getBalance(buyer).then(parseInt);
+
+      const expected_remaning_bal = buyer_bal1 - selling_price - gasFee;
+      const delta = buyer_bal2 - expected_remaning_bal;
+      assertHelper.AssertNearlyEqual(buyer_bal2, expected_remaning_bal);
     });
   });
 });
