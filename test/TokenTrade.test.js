@@ -4,7 +4,7 @@ const {expect} = require('chai');
 const ArtNFT = artifacts.require('ArtNFT.sol');
 const TradeNFT = artifacts.require('TradeNFT.sol');
 
-const AssertNearlyEqual = require('./utils/AssertNearlyEqual');
+const assertHelper = require('./utils/AssertHelper');
 
 contract('NFT Token Trade', async (accounts) => {
   const ETHER = Math.pow(10, 18);
@@ -150,7 +150,7 @@ contract('NFT Token Trade', async (accounts) => {
 
     it('can buy item for sale', async () => {
       const tokenId = await nftMint(seller);
-      const selling_price = 0.00001 * ETHER;
+      const selling_price = 0.001 * ETHER;
 
       // approve the smart contract to sell NFT
       await nftContract.approve(tradeContract.address, tokenId, {from: seller});
@@ -167,19 +167,23 @@ contract('NFT Token Trade', async (accounts) => {
       });
 
       // assert the balance of seller added
-      const seller_bal2 = await web3.eth.getBalance(seller);
-      AssertNearlyEqual(
+      let seller_bal2 = await web3.eth.getBalance(seller);
+      assertHelper.AssertNearlyEqual(
         parseInt(seller_bal2),
         parseInt(seller_bal1) + selling_price,
       );
 
-      // TODO: Write test suite for the buyer balance reduction //
       // assert balance of receiver deducted
-      let buyer_bal2 = await web3.eth.getBalance(buyer);
+      const buyer_bal2 = await web3.eth.getBalance(buyer);
       const {gasUsed} = receipt;
       const {gasPrice} = await web3.eth.getTransaction(tx);
       const gasFee = gasUsed * gasPrice; //wei
-      // buyer_bal2 = buyer_bal2.parseInt();
+      assertHelper.RemaningPriceAssert(
+        buyer_bal1,
+        buyer_bal2,
+        selling_price,
+        gasFee,
+      );
       assert.fail('all good');
 
       // check if ownership is transfered
