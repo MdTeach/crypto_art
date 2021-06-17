@@ -184,7 +184,6 @@ contract('NFT Token Trade', async (accounts) => {
         selling_price,
         gasFee,
       );
-      assert.fail('all good');
 
       // check if ownership is transfered
       const newOwner = await nftContract.ownerOf(tokenId);
