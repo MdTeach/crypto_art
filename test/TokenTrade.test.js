@@ -146,9 +146,9 @@ contract('NFT Token Trade', async (accounts) => {
   describe('User can buy the token listed for sale', async () => {
     // seller mints and lists for sale
     // buyer purchases the token
-    const [user1, seller, buyer] = accounts;
+    const [_, seller, buyer] = accounts;
 
-    it('can buy item for sale', async () => {
+    it.skip('can buy item for sale', async () => {
       const tokenId = await nftMint(seller);
       const selling_price = 0.001 * ETHER;
 
@@ -160,6 +160,7 @@ contract('NFT Token Trade', async (accounts) => {
 
       const seller_bal1 = await web3.eth.getBalance(seller);
       const buyer_bal1 = await web3.eth.getBalance(buyer);
+
       // buying nft transaction
       const {tx, receipt} = await tradeContract.buyToken(tokenId, {
         from: buyer,
@@ -195,7 +196,30 @@ contract('NFT Token Trade', async (accounts) => {
       assert.fail('All good');
     });
 
-    // it('can only buy existing token', async () => {});
+    it('can only buy existing token', async () => {
+      const selling_price = 0.001 * ETHER;
+
+      // buying unexisting nft transaction
+      const {tx, receipt} = await tradeContract.buyToken(tokenId, {
+        from: buyer,
+        value: selling_price,
+      });
+
+      assert.fail('All good');
+      const tokenId = await nftMint(seller);
+
+      // approve the smart contract to sell NFT
+      await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: seller,
+      });
+
+      // buying nft transaction
+      const {tx, receipt} = await tradeContract.buyToken(tokenId, {
+        from: buyer,
+        value: selling_price,
+      });
+    });
     // it('canot buy item which is not for sale', async () => {});
     // it('conont buy the items with less than listed price', async () => {});
     // it('refunds the extra token back to the buyer', async () => {});
