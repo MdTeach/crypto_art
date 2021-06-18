@@ -14,6 +14,10 @@ function GenerateArtLayout() {
     setImage(imageData.image);
   };
 
+  const generateNFT = async () => {
+    console.log('Generating NFT');
+  };
+
   useEffect(() => {
     console.log('Effect call');
     fetchImage();
@@ -31,6 +35,9 @@ function GenerateArtLayout() {
       ) : null}
       <br />
       <button onClick={fetchImage}>Generate Another</button>
+      <br />
+      <br />
+      <button onClick={generateNFT}>Publish NFT</button>
     </div>
   );
 }
