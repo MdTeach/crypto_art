@@ -316,7 +316,6 @@ contract('NFT Token Trade', async (accounts) => {
         value: selling_price,
       });
 
-      console.log('Abishek \n buy passed');
       // after buying item is not for sale
       await assertHelper.ExpectRevert(async () => {
         await tradeContract.getItemPrice(tokenId);

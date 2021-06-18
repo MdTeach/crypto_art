@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react';
+import useWeb3 from './hooks/web3';
+
 import axios from 'axios';
 
 interface ImageRes {
