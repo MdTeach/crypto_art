@@ -1,5 +1,8 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useContext} from 'react';
 import axios from 'axios';
+
+import Web3Context from '../contexts/Web3Context';
+
 import {uploadToIPFS, publishMetaData} from '../utils/IpfsUtils';
 import MetaDataType from '../utils/MetaData';
 
@@ -8,6 +11,8 @@ interface ImageRes {
 }
 
 function GenerateArtLayout() {
+  const {account} = useContext(Web3Context);
+
   const [image, setImage] = useState('');
   const [name, setName] = useState('Davinci');
   const [description, setDesc] = useState('Description');
@@ -19,6 +24,8 @@ function GenerateArtLayout() {
   };
 
   const generateNFT = async () => {
+    console.log('generating for', account);
+
     // publish into the infura image
     const [imagePath, err] = await uploadToIPFS(image);
     if (err) {
@@ -44,16 +51,14 @@ function GenerateArtLayout() {
     }
 
     console.log(nftPath);
-    alert(nftPath);
 
-    // create meta  data
     // mint from the contract
   };
 
-  useEffect(() => {
-    console.log('Effect call');
-    fetchImage();
-  }, []);
+  // useEffect(() => {
+  //   console.log('Effect call');
+  //   fetchImage();
+  // }, []);
 
   return (
     <div style={{textAlign: 'center'}}>

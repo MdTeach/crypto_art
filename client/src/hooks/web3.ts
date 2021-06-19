@@ -4,17 +4,15 @@ import getWeb3 from '../web3/getWeb3';
 
 type state = {
   isLoading: boolean;
-  isWeb3: boolean;
   web3: Web3 | null;
-  accounts: string[];
+  account: string;
 };
 
 const Hooks = (): state => {
   const [state, setState] = useState<state>({
     isLoading: true,
-    isWeb3: false,
     web3: null,
-    accounts: [],
+    account: '',
   });
 
   useEffect(() => {
@@ -25,9 +23,8 @@ const Hooks = (): state => {
         setState({
           ...state,
           isLoading: false,
-          isWeb3: true,
           web3,
-          accounts,
+          account: accounts[0],
         });
       } catch {
         setState({
@@ -38,7 +35,7 @@ const Hooks = (): state => {
     })();
   }, [state]);
 
-  const {isLoading, isWeb3, web3, accounts} = state;
-  return {isLoading, isWeb3, web3, accounts};
+  const {isLoading, web3, account} = state;
+  return {isLoading, web3, account};
 };
 export default Hooks;
