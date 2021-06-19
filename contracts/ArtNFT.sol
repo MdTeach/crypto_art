@@ -7,6 +7,8 @@ contract ArtNFT is ERC721 {
     mapping(uint256 => string) private _tokenURIs;
     string private _baseURL = 'https://ipfs.io/ipfs/';
 
+    event CollectibleMinted(uint256 _tokenId, address new_owner);
+
     constructor() ERC721('CryptoArt', 'CART') {
         tokenCounter = 0;
     }
@@ -43,6 +45,8 @@ contract ArtNFT is ERC721 {
         uint256 newItemId = tokenCounter;
         _safeMint(msg.sender, newItemId);
         _setTokenURI(newItemId, _tokenURI);
+        emit CollectibleMinted(newItemId, msg.sender);
+
         tokenCounter = tokenCounter + 1;
         return newItemId;
     }

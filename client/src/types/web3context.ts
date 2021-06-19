@@ -6,6 +6,8 @@ interface Web3ContextType {
   nftContract?: Contract | undefined;
   tradeContract?: Contract | undefined;
   account?: String | undefined;
+  nftContractAddress?: String;
+  tradeContractAddress?: String;
 }
 
 export default Web3ContextType;

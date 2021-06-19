@@ -14,7 +14,9 @@ import Web3Context from './contexts/Web3Context';
 function App() {
   const {isLoading, web3, account} = useWeb3();
   const [nftContract, setNftContract] = useState<Contract>();
+  const [nftContractAddress, setNftContractAddress] = useState('');
   const [tradeContract, setTradeContract] = useState<Contract>();
+  const [tradeContractAddress, setTradeContractAddress] = useState('');
   const [isConfigured, setIsConfigured] = useState(false);
 
   useEffect(() => {
@@ -42,11 +44,9 @@ function App() {
         );
 
         setNftContract(art_nft_contract_instance);
+        setNftContractAddress(art_nft_address);
         setTradeContract(trade_nft_contract_instance);
-
-        console.log(art_nft_contract_instance);
-        console.log(trade_nft_contract_instance);
-
+        setTradeContractAddress(trade_nft_address);
         setIsConfigured(true);
       }
     })();
@@ -58,7 +58,15 @@ function App() {
 
   return (
     <div className="App">
-      <Web3Context.Provider value={{web3, nftContract, tradeContract, account}}>
+      <Web3Context.Provider
+        value={{
+          web3,
+          nftContract,
+          tradeContract,
+          account,
+          nftContractAddress,
+          tradeContractAddress,
+        }}>
         <GenerateLayout />
       </Web3Context.Provider>
 

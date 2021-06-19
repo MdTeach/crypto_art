@@ -11,7 +11,7 @@ interface ImageRes {
 }
 
 function GenerateArtLayout() {
-  const {web3, nftContract, tradeContract, account} = useContext(Web3Context);
+  const context = useContext(Web3Context);
 
   const [image, setImage] = useState('');
   const [name, setName] = useState('Davinci');
@@ -23,12 +23,31 @@ function GenerateArtLayout() {
     setImage(imageData.image);
   };
 
+  const getTokenId = (txn: any) => {
+    try {
+      return txn.events.CollectibleMinted.returnValues[0];
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  };
+
   const generateNFT = async () => {
     const tokenURI = await getTokenURI();
-    const txn = await nftContract?.methods.createCollectible(tokenURI).send({
-      from: account,
-    });
-    console.log(txn);
+    const txn = await context.nftContract?.methods
+      .createCollectible(tokenURI)
+      .send({
+        from: context.account,
+      });
+
+    const tokenId = getTokenId(txn);
+    console.log(`Open Sea URL`);
+    console.log(
+      `https://testnets.opensea.io/assets/${context.nftContractAddress}/${tokenId}`,
+    );
+
+    console.log(`NFT minted`);
+    console.log(`https://ipfs.io/ipfs/${tokenURI}`);
   };
 
   const getTokenURI = async () => {
