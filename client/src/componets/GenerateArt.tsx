@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
+import {uploadToIPFS, publishMetaData} from '../utils/IpfsUtils';
+import MetaDataType from '../utils/MetaData';
 
 interface ImageRes {
   image: string;
@@ -7,6 +9,8 @@ interface ImageRes {
 
 function GenerateArtLayout() {
   const [image, setImage] = useState('');
+  const [name, setName] = useState('Davinci');
+  const [description, setDesc] = useState('Description');
 
   const fetchImage = async () => {
     const response = await axios.get('http://127.0.0.1:5000/');
@@ -15,7 +19,35 @@ function GenerateArtLayout() {
   };
 
   const generateNFT = async () => {
-    console.log('Generating NFT');
+    // publish into the infura image
+    const [imagePath, err] = await uploadToIPFS(image);
+    if (err) {
+      console.log(err.message);
+      return;
+    }
+
+    // nft meta data
+    const metaData: MetaDataType = {
+      name,
+      description,
+      image: imagePath,
+      properties: {
+        artist: 'Davinci',
+        inferenceTime: '10ms',
+      },
+    };
+
+    const [nftPath, err1] = await publishMetaData(metaData);
+    if (err1) {
+      console.log(err1.message);
+      return;
+    }
+
+    console.log(nftPath);
+    alert(nftPath);
+
+    // create meta  data
+    // mint from the contract
   };
 
   useEffect(() => {
