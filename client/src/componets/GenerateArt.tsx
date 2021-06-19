@@ -11,7 +11,7 @@ interface ImageRes {
 }
 
 function GenerateArtLayout() {
-  const {account} = useContext(Web3Context);
+  const {web3, nftContract, tradeContract, account} = useContext(Web3Context);
 
   const [image, setImage] = useState('');
   const [name, setName] = useState('Davinci');
@@ -24,8 +24,14 @@ function GenerateArtLayout() {
   };
 
   const generateNFT = async () => {
-    console.log('generating for', account);
+    const tokenURI = await getTokenURI();
+    const txn = await nftContract?.methods.createCollectible(tokenURI).send({
+      from: account,
+    });
+    console.log(txn);
+  };
 
+  const getTokenURI = async () => {
     // publish into the infura image
     const [imagePath, err] = await uploadToIPFS(image);
     if (err) {
@@ -49,10 +55,7 @@ function GenerateArtLayout() {
       console.log(err1.message);
       return;
     }
-
-    console.log(nftPath);
-
-    // mint from the contract
+    return nftPath;
   };
 
   // useEffect(() => {
