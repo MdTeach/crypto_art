@@ -2,13 +2,14 @@ import {useEffect, useState, useContext} from 'react';
 import axios from 'axios';
 import assert from 'assert';
 import Web3Context from '../../contexts/Web3Context';
-import MetaData from '../../utils/MetaData';
+import {MetaDataIndexed} from '../../utils/MetaData';
+import {Link} from 'react-router-dom';
 
 type UserTokens = Array<string>;
 
 function OwnedLayout() {
   const [ownedTokens, setOwnedTokens] = useState<UserTokens>([]);
-  const [data, setData] = useState<MetaData[]>([]);
+  const [data, setData] = useState<MetaDataIndexed[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isEmpty, setIsEmpty] = useState(true);
 
@@ -16,13 +17,14 @@ function OwnedLayout() {
 
   const loadMetaData = async (tokens: UserTokens) => {
     try {
-      const datas: MetaData[] = await Promise.all(
-        tokens.map((el) =>
+      const datas: MetaDataIndexed[] = await Promise.all(
+        tokens.map((el, token_id) =>
           context.nftContract?.methods
             .tokenURI(el)
             .call()
             .then((url: string) => axios.get(url))
-            .then((r: any) => r.data),
+            .then((r: any) => r.data)
+            .then((r: any) => ({...r, token_id})),
         ),
       );
       assert(datas.length > 0, 'Data empty');
@@ -73,8 +75,12 @@ function OwnedLayout() {
         <div key={el.image}>
           <img src={el.image} alt={el.name} style={{width: 150, height: 150}} />
           <div>Name: {el.name}</div>
+          <div>Token Id: {el.token_id}</div>
           <div>Desc: {el.description}</div>
           <div>Artist: {el.properties.artist}</div>
+          <Link to={`/detail/${el.token_id}`}>View in detail</Link>
+          <br />
+          <br />
           <br />
         </div>
       ))}

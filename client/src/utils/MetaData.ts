@@ -8,4 +8,8 @@ interface MetaData {
   };
 }
 
+export interface MetaDataIndexed extends MetaData {
+  token_id: string;
+}
+
 export default MetaData;

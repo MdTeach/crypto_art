@@ -13,6 +13,7 @@ import Nav from './componets/nav/Navigation';
 import GenerateLayout from './componets/GenerateArt';
 import ExploreLayout from './componets/explore_layout/explore_layout';
 import OwnedLayout from './componets/user_owned/user_owned';
+import TokenDetail from './componets/token_details/token_details';
 
 function App() {
   const {isLoading, web3, account} = useWeb3();
@@ -81,6 +82,9 @@ function App() {
             </Route>
             <Route exact path="/explore">
               <ExploreLayout />
+            </Route>
+            <Route path="/detail/:token_id">
+              <TokenDetail />
             </Route>
           </Switch>
         </Web3Context.Provider>
