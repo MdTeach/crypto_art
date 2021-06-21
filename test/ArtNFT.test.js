@@ -5,8 +5,8 @@ contract('Token Deployment', async (accounts) => {
   const zero_address = '0x0000000000000000000000000000000000000000';
   let contract;
 
-  before(async () => {
-    contract = await ArtNFT.deployed();
+  beforeEach(async () => {
+    contract = await ArtNFT.new();
   });
 
   describe('Token Deployment', () => {
@@ -37,6 +37,26 @@ contract('Token Deployment', async (accounts) => {
       assert.strictEqual(from, zero_address, 'Origin must from zero address');
       assert.strictEqual(to, accounts[0]);
       assert.strictEqual(tokenId.toNumber(), 0, 'First token is zero');
+    });
+  });
+
+  describe('List tokens owned by the user', async () => {
+    const [user1] = accounts;
+    it('gives returns empty array when no token onwned', async () => {
+      const res = await contract.tokensOfOwner.call(user1);
+      assert.strictEqual(res.length, 0, 'Empty array not returned');
+    });
+
+    it('gives the all token minted', async () => {
+      const tokenURI = 'ipfs://ipfs.io/ipfs/bafybei....';
+
+      await contract.createCollectible(tokenURI);
+      let res = await contract.tokensOfOwner.call(user1);
+      assert.strictEqual(res.length, 1, 'User holds one item');
+
+      await contract.createCollectible(tokenURI);
+      res = await contract.tokensOfOwner.call(user1);
+      assert.strictEqual(res.length, 2, 'User holds two item');
     });
   });
 });

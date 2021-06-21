@@ -50,4 +50,28 @@ contract ArtNFT is ERC721 {
         tokenCounter = tokenCounter + 1;
         return newItemId;
     }
+
+    function tokensOfOwner(address _owner)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        uint256 numTokens = balanceOf(_owner);
+        if (numTokens == 0) {
+            // Return an empty array
+            return new uint256[](0);
+        }
+
+        uint256 _totalSupply = tokenCounter;
+        uint256[] memory owner_tokens = new uint256[](numTokens);
+
+        uint256 resultIndex = 0;
+        for (uint256 i = 0; i < _totalSupply; i++) {
+            if (ownerOf(i) == _owner) {
+                owner_tokens[resultIndex] = i;
+                resultIndex++;
+            }
+        }
+        return owner_tokens;
+    }
 }
