@@ -1,10 +1,10 @@
 interface MetaData {
-  name: String;
-  description: String;
-  image: String;
+  name: string;
+  description: string;
+  image: string;
   properties: {
-    artist: String;
-    inferenceTime: String | number;
+    artist: string;
+    inferenceTime: string | number;
   };
 }
 

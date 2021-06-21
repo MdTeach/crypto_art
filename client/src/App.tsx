@@ -12,6 +12,7 @@ import Web3Context from './contexts/Web3Context';
 import Nav from './componets/nav/Navigation';
 import GenerateLayout from './componets/GenerateArt';
 import ExploreLayout from './componets/explore_layout/explore_layout';
+import OwnedLayout from './componets/user_owned/user_owned';
 
 function App() {
   const {isLoading, web3, account} = useWeb3();
@@ -54,7 +55,7 @@ function App() {
     })();
   }, [web3]);
 
-  if (isLoading && !isConfigured) {
+  if (isLoading || !isConfigured) {
     return <h1>Loading ..</h1>;
   }
 
@@ -73,7 +74,7 @@ function App() {
           <Nav />
           <Switch>
             <Route exact path="/">
-              <GenerateLayout />
+              <OwnedLayout />
             </Route>
             <Route exact path="/create">
               <GenerateLayout />
