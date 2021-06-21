@@ -5,6 +5,7 @@ import Web3Context from '../contexts/Web3Context';
 
 import {uploadToIPFS, publishMetaData} from '../utils/IpfsUtils';
 import MetaDataType from '../utils/MetaData';
+import web3 from '../web3/getWeb3';
 
 interface ImageRes {
   image: string;
@@ -14,8 +15,8 @@ function GenerateArtLayout() {
   const context = useContext(Web3Context);
 
   const [image, setImage] = useState('');
-  const [name, setName] = useState('Davinci');
-  const [description, setDesc] = useState('Description');
+  const [name, setName] = useState('Abishek');
+  const [description, setDesc] = useState('A shot description');
 
   const fetchImage = async () => {
     const response = await axios.get('http://127.0.0.1:5000/');
@@ -32,24 +33,6 @@ function GenerateArtLayout() {
     }
   };
 
-  const generateNFT = async () => {
-    const tokenURI = await getTokenURI();
-    const txn = await context.nftContract?.methods
-      .createCollectible(tokenURI)
-      .send({
-        from: context.account,
-      });
-
-    const tokenId = getTokenId(txn);
-    console.log(`Open Sea URL`);
-    console.log(
-      `https://testnets.opensea.io/assets/${context.nftContractAddress}/${tokenId}`,
-    );
-
-    console.log(`NFT minted`);
-    console.log(`https://ipfs.io/ipfs/${tokenURI}`);
-  };
-
   const getTokenURI = async () => {
     // publish into the infura image
     const [imagePath, err] = await uploadToIPFS(image);
@@ -62,12 +45,13 @@ function GenerateArtLayout() {
     const metaData: MetaDataType = {
       name,
       description,
-      image: imagePath,
+      image: `https://ipfs.io/ipfs/${imagePath}`,
       properties: {
-        artist: 'Davinci',
+        artist: 'Abishek',
         inferenceTime: '10ms',
       },
     };
+    console.log(metaData.image);
 
     const [nftPath, err1] = await publishMetaData(metaData);
     if (err1) {
@@ -77,11 +61,22 @@ function GenerateArtLayout() {
     return nftPath;
   };
 
-  // useEffect(() => {
-  //   console.log('Effect call');
-  //   fetchImage();
-  // }, []);
+  const generateNFT = async () => {
+    const tokenURI = await getTokenURI();
+    const txn = await context.nftContract?.methods
+      .createCollectible(tokenURI)
+      .send({
+        from: context.account,
+      });
 
+    if (txn && txn.status) {
+      const tokenId = getTokenId(txn);
+      console.log(
+        `https://testnets.opensea.io/assets/${context.nftContractAddress}/${tokenId}`,
+      );
+      console.log(`https://ipfs.io/ipfs/${tokenURI}`);
+    }
+  };
   return (
     <div style={{textAlign: 'center'}}>
       <h2>Crypto Art</h2>

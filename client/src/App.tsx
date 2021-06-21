@@ -1,15 +1,17 @@
-import {useEffect, useState, createContext} from 'react';
-import useWeb3 from './hooks/web3';
-
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {useEffect, useState} from 'react';
 import {Contract} from 'web3-eth-contract';
 import {AbiItem} from 'web3-utils';
 
-import GenerateLayout from './componets/GenerateArt';
-
+import useWeb3 from './hooks/web3';
 import {getContractAddress} from './utils/ContractDeployHelper';
 import ArtTokenContractJSON from './contracts_deployed/ArtNFT.json';
 import TradeContractJSON from './contracts_deployed/TradeNFT.json';
 import Web3Context from './contexts/Web3Context';
+
+import Nav from './componets/nav/Navigation';
+import GenerateLayout from './componets/GenerateArt';
+import ExploreLayout from './componets/explore_layout/explore_layout';
 
 function App() {
   const {isLoading, web3, account} = useWeb3();
@@ -57,26 +59,32 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <Web3Context.Provider
-        value={{
-          web3,
-          nftContract,
-          tradeContract,
-          account,
-          nftContractAddress,
-          tradeContractAddress,
-        }}>
-        <GenerateLayout />
-      </Web3Context.Provider>
-
-      {/* <button
-        onClick={() => {
-          console.log('nid:', networkId);
-        }}>
-        TIme Pass
-      </button> */}
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <Web3Context.Provider
+          value={{
+            web3,
+            nftContract,
+            tradeContract,
+            account,
+            nftContractAddress,
+            tradeContractAddress,
+          }}>
+          <Nav />
+          <Switch>
+            <Route exact path="/">
+              <GenerateLayout />
+            </Route>
+            <Route exact path="/create">
+              <GenerateLayout />
+            </Route>
+            <Route exact path="/explore">
+              <ExploreLayout />
+            </Route>
+          </Switch>
+        </Web3Context.Provider>
+      </div>
+    </BrowserRouter>
   );
 }
 
