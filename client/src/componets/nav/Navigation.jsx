@@ -16,6 +16,12 @@ export default function App() {
             <li>
               <Link to="/explore">Explore</Link>
             </li>
+            <li>
+              <Link to="/detail">Detail</Link>
+            </li>
+            <li>
+              <Link to="/mine">My Collectibles</Link>
+            </li>
           </ul>
         </nav>
 
