@@ -18,13 +18,13 @@ function OwnedLayout() {
   const loadMetaData = async (tokens: UserTokens) => {
     try {
       const datas: MetaDataIndexed[] = await Promise.all(
-        tokens.map((el, token_id) =>
+        tokens.map((el) =>
           context.nftContract?.methods
             .tokenURI(el)
             .call()
             .then((url: string) => axios.get(url))
             .then((r: any) => r.data)
-            .then((r: any) => ({...r, token_id})),
+            .then((r: any) => ({...r, token_id: el})),
         ),
       );
       assert(datas.length > 0, 'Data empty');
@@ -59,7 +59,6 @@ function OwnedLayout() {
       console.log('Datas', data);
       setIsFetching(false);
     })();
-    // console.log('Owned tokens changed', ownedTokens);
   }, [ownedTokens, isEmpty]);
 
   if (isEmpty) {
