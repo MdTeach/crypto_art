@@ -4,8 +4,10 @@ import Web3Context from '../../contexts/Web3Context';
 import {Link, useParams, useHistory} from 'react-router-dom';
 
 import useTokenInfo from '../../hooks/tokenInfo';
+import {useState} from 'react';
 
 const IsInValidId = (id: string) => isNaN(parseInt(id));
+const ETHER = Math.pow(10, 18);
 
 interface RouteParams {
   token_id: string;
@@ -21,10 +23,22 @@ function TokenDetail() {
     context,
   });
 
+  const [isBuying, setIsBuying] = useState(false);
+
   const isOwner = () => context.account === owner;
   const isForSale = () => sellingPrice > 0;
 
-  const handleBuy = async () => {};
+  const handleBuy = async () => {
+    setIsBuying(true);
+    var txn = await context.tradeContract?.methods
+      .buyToken(token_id)
+      .send({from: context.account, value: sellingPrice})
+      .catch(() => setIsBuying(false));
+
+    console.log(txn);
+
+    window.location.reload();
+  };
 
   const handleSell = () => {
     history.push(`/sell/${token_id}`);
@@ -55,13 +69,16 @@ function TokenDetail() {
             <br /> {owner} {owner === context.account ? '(mine)' : <></>}
           </h3>
 
-          {!isOwner() && isForSale() ? <button>Buy It</button> : null}
+          {!isOwner() && isForSale() ? (
+            <button onClick={handleBuy}>Buy It</button>
+          ) : null}
           {isOwner() && !isForSale() ? (
             <button onClick={handleSell}>Place for sale</button>
           ) : null}
           {isOwner() && isForSale() ? <button>Remove from sale</button> : null}
 
           <br />
+          {isBuying ? <h3>Buying the token.....</h3> : null}
           <Link
             target="_blank"
             to={{
