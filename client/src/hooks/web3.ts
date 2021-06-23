@@ -8,12 +8,26 @@ type state = {
   account: string;
 };
 
+type Window = any;
+declare const window: Window;
+
 const Hooks = (): state => {
   const [state, setState] = useState<state>({
     isLoading: true,
     web3: null,
     account: '',
   });
+
+  // reload on the account change
+  useEffect(() => {
+    window.addEventListener('load', async () => {
+      if (window.ethereum) {
+        window.ethereum.on('accountsChanged', function () {
+          window.location.reload();
+        });
+      }
+    });
+  }, []);
 
   useEffect(() => {
     (async (): Promise<void> => {

@@ -24,6 +24,7 @@ function TokenDetail() {
   });
 
   const [isBuying, setIsBuying] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const isOwner = () => context.account === owner;
   const isForSale = () => sellingPrice > 0;
@@ -37,13 +38,23 @@ function TokenDetail() {
 
     console.log(txn);
 
-    window.location.reload();
+    if (isBuying) window.location.reload();
   };
 
   const handleSell = () => {
     history.push(`/sell/${token_id}`);
   };
-  const handelCancelSell = async () => {};
+  const handelCancelSell = async () => {
+    setIsRemoving(true);
+    var txn = await context.tradeContract?.methods
+      .buyToken(token_id)
+      .send({from: context.account})
+      .catch(() => setIsRemoving(false));
+
+    console.log(txn);
+
+    if (isRemoving) window.location.reload();
+  };
 
   if (IsInValidId(token_id)) {
     return <h1>Token Id Not valid :(</h1>;
@@ -79,6 +90,7 @@ function TokenDetail() {
 
           <br />
           {isBuying ? <h3>Buying the token.....</h3> : null}
+          {isBuying ? <h3>Removing token from the sale.....</h3> : null}
           <Link
             target="_blank"
             to={{
