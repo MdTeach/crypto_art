@@ -1,10 +1,7 @@
-import {useEffect, useState, useContext} from 'react';
-import axios from 'axios';
+import {useState, useContext} from 'react';
+import {useHistory} from 'react-router-dom';
 
 import Web3Context from '../../contexts/Web3Context';
-import {Link, useParams, useHistory} from 'react-router-dom';
-import {MetaDataIndexed} from '../../utils/MetaData';
-
 import useTokenInfo from '../../hooks/tokenInfo';
 
 interface Props {
@@ -14,6 +11,9 @@ interface Props {
 const ETHER = Math.pow(10, 18);
 
 const SellLayout = ({token_id}: Props) => {
+  const [sellStatus, setSellStatus] = useState(false);
+  const [sellMsg, setSellMsg] = useState('');
+
   const [price, setPrice] = useState(0.001);
   const context = useContext(Web3Context);
   const history = useHistory();
@@ -32,12 +32,17 @@ const SellLayout = ({token_id}: Props) => {
       alert('Cannot sale for zeor price');
       return;
     }
+
+    setSellMsg('Allow the contract to auto sell the Token on behalf of you');
+    setSellStatus(true);
+
     const valueWei = price * ETHER;
     var txn = await context.nftContract?.methods
       .approve(context.tradeContractAddress, token_id)
       .send({from: context.account});
 
     console.log(txn);
+    setSellMsg('Confirm listing with the price');
 
     var txn = await context.tradeContract?.methods
       .listForSale(token_id, valueWei)
@@ -45,24 +50,17 @@ const SellLayout = ({token_id}: Props) => {
 
     console.log(txn);
     console.log('success');
+
+    // redirect to the token detials
+    history.push(`/detail/${token_id}`);
   };
 
-  if (isLoading) {
-    console.log('Loading....');
-  } else {
-    console.log(metadata);
-  }
   return (
     <div>
       {isLoading ? (
         <h3>Loading...</h3>
       ) : (
         <>
-          {/* <h4>Sell</h4>
-          <ul>
-            <li>Approve the contract to sale</li>
-            <li>Place the token for sale</li>
-          </ul> */}
           <div style={{display: 'flex', padding: '1em'}}>
             <img
               alt={metadata?.name}
@@ -83,6 +81,13 @@ const SellLayout = ({token_id}: Props) => {
           <br />
           <button onClick={handleSale}>List on sale</button>
           <button onClick={handleCancel}>Cancel</button>
+
+          {sellStatus ? (
+            <>
+              <h3>Listing for sale....</h3>
+              <h5>{sellMsg}</h5>
+            </>
+          ) : null}
         </>
       )}
     </div>

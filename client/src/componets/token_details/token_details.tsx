@@ -1,9 +1,7 @@
-import {useEffect, useState, useContext} from 'react';
-import axios from 'axios';
+import {useContext} from 'react';
 
 import Web3Context from '../../contexts/Web3Context';
 import {Link, useParams, useHistory} from 'react-router-dom';
-import {MetaDataIndexed} from '../../utils/MetaData';
 
 import useTokenInfo from '../../hooks/tokenInfo';
 
