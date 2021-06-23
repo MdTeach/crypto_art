@@ -2,7 +2,7 @@ import {useEffect, useState, useContext} from 'react';
 import axios from 'axios';
 
 import Web3Context from '../../contexts/Web3Context';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useParams, useHistory} from 'react-router-dom';
 import {MetaDataIndexed} from '../../utils/MetaData';
 
 const IsInValidId = (id: string) => isNaN(parseInt(id));
@@ -16,6 +16,7 @@ function TokenDetail() {
   const [owner, setOwner] = useState('0x0');
   const [sellingPrice, setSellingPrice] = useState(0);
   const [loading, setLoading] = useState(true);
+  const history = useHistory();
 
   const context = useContext(Web3Context);
   let {token_id} = useParams<RouteParams>();
@@ -23,8 +24,16 @@ function TokenDetail() {
   const isOwner = () => context.account === owner;
   const isForSale = () => sellingPrice > 0;
 
+  const handleBuy = async () => {};
+
+  const handleSell = () => {
+    history.push(`/sell/${token_id}`);
+  };
+  const handelCancelSell = async () => {};
+
+  useEffect(() => {});
+
   useEffect(() => {
-    if (IsInValidId(token_id)) return;
     // TODO: check if token exists
 
     (async () => {
@@ -75,7 +84,9 @@ function TokenDetail() {
           </h3>
 
           {!isOwner() && isForSale() ? <button>Buy It</button> : null}
-          {isOwner() && !isForSale() ? <button>Place for sale</button> : null}
+          {isOwner() && !isForSale() ? (
+            <button onClick={handleSell}>Place for sale</button>
+          ) : null}
           {isOwner() && isForSale() ? <button>Remove from sale</button> : null}
 
           <br />

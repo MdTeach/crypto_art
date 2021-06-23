@@ -14,6 +14,7 @@ import GenerateLayout from './componets/GenerateArt';
 import ExploreLayout from './componets/explore_layout/explore_layout';
 import OwnedLayout from './componets/user_owned/user_owned';
 import TokenDetail from './componets/token_details/token_details';
+import SellRoute from './componets/token_sales/sell_route';
 
 function App() {
   const {isLoading, web3, account} = useWeb3();
@@ -85,6 +86,9 @@ function App() {
             </Route>
             <Route path="/detail/:token_id">
               <TokenDetail />
+            </Route>
+            <Route path="/sell/:token_id">
+              <SellRoute />
             </Route>
           </Switch>
         </Web3Context.Provider>
