@@ -51,7 +51,7 @@ function TokenDetail() {
           {!isValid || hasErr ? (
             <Redirect to="/" />
           ) : (
-            <SellLayout token={token_id} />
+            <SellLayout token_id={token_id} />
           )}
         </>
       )}
