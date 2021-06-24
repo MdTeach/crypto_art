@@ -27,7 +27,7 @@ function TokenDetail() {
         });
 
       const _sellingPrice = await context.tradeContract?.methods
-        .tokensForSale(token_id)
+        .isListed(token_id)
         .call()
         .then(parseInt)
         .catch((err: any) => {

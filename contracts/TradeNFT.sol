@@ -78,6 +78,10 @@ contract TradeNFT {
         emit TokenSold(_tokenId, _price, msg.sender, _seller);
     }
 
+    function isListed(uint256 _tokenId) public view returns (uint256) {
+        return tokensForSale[_tokenId];
+    }
+
     function getItemPrice(uint256 _tokenId) public view returns (uint256) {
         require(
             tokensForSale[_tokenId] != 0,

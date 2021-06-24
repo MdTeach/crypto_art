@@ -31,12 +31,10 @@ function TokenDetail() {
 
   const handleBuy = async () => {
     setIsBuying(true);
-    var txn = await context.tradeContract?.methods
+    await context.tradeContract?.methods
       .buyToken(token_id)
       .send({from: context.account, value: sellingPrice})
       .catch(() => setIsBuying(false));
-
-    console.log(txn);
 
     if (isBuying) window.location.reload();
   };
@@ -44,16 +42,16 @@ function TokenDetail() {
   const handleSell = () => {
     history.push(`/sell/${token_id}`);
   };
+
   const handelCancelSell = async () => {
     setIsRemoving(true);
-    var txn = await context.tradeContract?.methods
-      .buyToken(token_id)
+
+    await context.tradeContract?.methods
+      .removeFromSale(token_id)
       .send({from: context.account})
       .catch(() => setIsRemoving(false));
 
-    console.log(txn);
-
-    if (isRemoving) window.location.reload();
+    window.location.reload();
   };
 
   if (IsInValidId(token_id)) {
@@ -86,11 +84,13 @@ function TokenDetail() {
           {isOwner() && !isForSale() ? (
             <button onClick={handleSell}>Place for sale</button>
           ) : null}
-          {isOwner() && isForSale() ? <button>Remove from sale</button> : null}
+          {isOwner() && isForSale() ? (
+            <button onClick={handelCancelSell}>Remove from sale</button>
+          ) : null}
 
           <br />
           {isBuying ? <h3>Buying the token.....</h3> : null}
-          {isBuying ? <h3>Removing token from the sale.....</h3> : null}
+          {isRemoving ? <h3>Removing token from the sale.....</h3> : null}
           <Link
             target="_blank"
             to={{

@@ -1,5 +1,5 @@
 const path = require('path');
-const {projectId, mnemonic} = require('./secrets.json');
+const {infura_endpoint, mnemonic} = require('./secrets.json');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
@@ -14,13 +14,9 @@ module.exports = {
       network_id: '*',
     },
     rinkeby: {
-      provider: () =>
-        new HDWalletProvider(
-          mnemonic,
-          `https://rinkeby.infura.io/v3/${projectId}`,
-        ),
+      provider: () => new HDWalletProvider(mnemonic, infura_endpoint),
       network_id: 4,
-      gas: 5500000,
+      gas: 8500000,
       confirmations: 2,
       timeoutBlocks: 200,
       skipDryRun: true,

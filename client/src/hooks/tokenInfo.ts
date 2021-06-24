@@ -37,9 +37,10 @@ const Hooks = ({token_id, context}: Param): state => {
         .call();
 
       const _sellingPrice = await context.tradeContract?.methods
-        .tokensForSale(token_id)
+        .isListed(token_id)
         .call()
-        .then(parseInt);
+        .then(parseInt)
+        .catch(() => 0);
 
       setState({
         metadata: _data,

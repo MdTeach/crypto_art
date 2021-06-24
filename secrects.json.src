@@ -1,5 +1,5 @@
 // add the secrect datas here and rename to json.src => json
 {
     "mnemonic": "dadda",
-    "projectId": "dadda"
+    "infura_endpoint": "wss://rinkeby.infura.io/ws/v3/ad0f7d8b5f45447fa15576f4f2c0c0bf"
 }
