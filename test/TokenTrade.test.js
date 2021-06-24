@@ -9,8 +9,7 @@ const assertHelper = require('./utils/AssertHelper');
 contract('NFT Token Trade', async (accounts) => {
   const ETHER = Math.pow(10, 18);
   const zero_address = '0x0000000000000000000000000000000000000000';
-  const token_uri =
-    'ipfs://ipfs.io/ipfs/bafybeieu5yrwl3agtl4tfinendjmpw4blsf4wps7g7knrwj22vr3xxagmy';
+  const token_uri = 'ipfs://ipfs.io/ipfs/bafybeiy';
 
   let nftContract;
   let tradeContract;
@@ -136,6 +135,55 @@ contract('NFT Token Trade', async (accounts) => {
       // owner can safely list for sale
       await tradeContract.listForSale(token_id, selling_price, {
         from: user1,
+      });
+    });
+  });
+
+  describe('User can unlist the token from sale', async () => {
+    const [seller, buyer] = accounts;
+
+    beforeEach(async () => {
+      nftContract = await ArtNFT.new();
+      tradeContract = await TradeNFT.new(nftContract.address);
+    });
+
+    it('allows user to unlist from sale', async () => {
+      const tokenId = await nftMint(seller);
+      const selling_price = 0.001 * ETHER;
+
+      // list for the sale
+      await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: seller,
+      });
+
+      // Unlist for sale
+      await tradeContract.removeFromSale(tokenId, {from: seller});
+      // after unilisting item is not for sale
+      await assertHelper.ExpectRevert(async () => {
+        await tradeContract.getItemPrice(tokenId);
+      });
+
+      // can place sale again
+      await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: seller,
+      });
+    });
+
+    it('disallow user to unlist others token from sale', async () => {
+      const tokenId = await nftMint(seller);
+      const selling_price = 0.001 * ETHER;
+
+      // list for the sale
+      await nftContract.approve(tradeContract.address, tokenId, {from: seller});
+      await tradeContract.listForSale(tokenId, selling_price, {
+        from: seller,
+      });
+
+      // canot list others tokens for sale
+      await assertHelper.ExpectRevert(async () => {
+        await tradeContract.removeFromSale(tokenId, {from: buyer});
       });
     });
   });

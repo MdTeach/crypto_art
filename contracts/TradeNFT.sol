@@ -4,7 +4,7 @@ import './ArtNFT.sol';
 
 contract TradeNFT {
     ArtNFT private artNFT;
-    mapping(uint256 => uint256) public tokensForSale;
+    mapping(uint256 => uint256) private tokensForSale;
 
     event ListedForSale(uint256 _tokenId, uint256 _sellingPrice);
     event TokenSold(
@@ -32,7 +32,8 @@ contract TradeNFT {
     }
     modifier resetTokenSale(uint256 _tokenId) {
         _;
-        tokensForSale[_tokenId] = 0;
+        // tokensForSale[_tokenId] = 0;
+        delete tokensForSale[_tokenId];
     }
 
     function listForSale(uint256 _tokenId, uint256 _sellingPrice)
@@ -83,6 +84,17 @@ contract TradeNFT {
             'Err: The item is not listed for sale'
         );
         return tokensForSale[_tokenId];
+    }
+
+    function removeFromSale(uint256 _tokenId) public {
+        uint256 _price = tokensForSale[_tokenId];
+        require(_price > 0, 'Err: token is not listed for sale');
+        require(
+            artNFT.ownerOf(_tokenId) == msg.sender,
+            'Err: only owner can unlist the item'
+        );
+
+        delete tokensForSale[_tokenId];
     }
 
     constructor(ArtNFT _artNFT) {
