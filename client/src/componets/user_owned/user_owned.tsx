@@ -77,7 +77,6 @@ function OwnedLayout() {
           <img src={el.image} alt={el.name} style={{width: 150, height: 150}} />
           <div>Name: {el.name}</div>
           <div>Token Id: {el.token_id}</div>
-          <div>Desc: {el.description}</div>
           <div>Artist: {el.properties.artist}</div>
           <Link to={`/detail/${el.token_id}`}>View in detail</Link>
           <br />

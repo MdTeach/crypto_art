@@ -98,7 +98,6 @@ function TokenDetail() {
           />
           <div>Name: {metadata?.name}</div>
           <div>Token Id: {metadata?.token_id}</div>
-          <div>Desc: {metadata?.description}</div>
           <div>Artist: {metadata?.properties.artist}</div>
           <h3>
             Owner:

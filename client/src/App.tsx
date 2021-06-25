@@ -10,7 +10,7 @@ import TradeContractJSON from './contracts_deployed/TradeNFT.json';
 import Web3Context from './contexts/Web3Context';
 
 import Nav from './componets/nav/Navigation';
-import GenerateLayout from './componets/GenerateArt';
+import GenerateLayout from './componets/generate/GenerateArt';
 import ExploreLayout from './componets/explore_layout/explore_layout';
 import OwnedLayout from './componets/user_owned/user_owned';
 import TokenDetail from './componets/token_details/token_details';
