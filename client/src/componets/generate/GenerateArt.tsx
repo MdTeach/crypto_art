@@ -19,6 +19,10 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import imageHolder from './empty_image.png';
 
+interface ImageRes {
+  image: string;
+}
+
 const useStyles = makeStyles({
   root: {
     maxWidth: 250,
@@ -28,10 +32,6 @@ const useStyles = makeStyles({
     height: 200,
   },
 });
-
-interface ImageRes {
-  image: string;
-}
 
 function GenerateArtLayout() {
   const classes = useStyles();

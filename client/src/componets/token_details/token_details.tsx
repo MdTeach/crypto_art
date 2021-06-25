@@ -70,9 +70,11 @@ function TokenDetail() {
     await context.tradeContract?.methods
       .buyToken(token_id)
       .send({from: context.account, value: sellingPrice})
-      .catch(() => setIsBuying(false));
+      .catch((e: any) => {
+        if (e.code === 4001) setIsBuying(false);
+      });
 
-    if (isBuying) window.location.reload();
+    window.location.reload();
   };
 
   const handleSell = () => {
@@ -85,7 +87,9 @@ function TokenDetail() {
     await context.tradeContract?.methods
       .removeFromSale(token_id)
       .send({from: context.account})
-      .catch(() => setIsRemoving(false));
+      .catch((e: any) => {
+        if (e.code === 4001) setIsBuying(false);
+      });
 
     window.location.reload();
   };
@@ -118,6 +122,7 @@ function TokenDetail() {
         <Loading />
       ) : (
         <div>
+          {isBuying || isRemoving ? <Loading /> : null}
           <h1
             style={{textAlign: 'left', marginTop: '1.5em', marginLeft: '10%'}}>
             Token INFO:
@@ -188,7 +193,12 @@ function TokenDetail() {
               <br />
               {!isOwner() && isForSale() ? (
                 <Button variant="contained" color="primary" onClick={handleBuy}>
-                  Buy For {sellingPrice} ETH
+                  Buy For{' '}
+                  {context.web3?.utils.fromWei(
+                    sellingPrice.toString(),
+                    'ether',
+                  )}{' '}
+                  ETH
                 </Button>
               ) : null}
               {isOwner() && !isForSale() ? (
@@ -209,8 +219,6 @@ function TokenDetail() {
               ) : null}
 
               <br />
-              {isBuying ? <h3>Buying the token.....</h3> : null}
-              {isRemoving ? <h3>Removing token from the sale.....</h3> : null}
             </div>
           </div>
 
@@ -252,7 +260,7 @@ function TokenDetail() {
                           to={{
                             pathname: `https://rinkeby.etherscan.io/address/${el.from}`,
                           }}>
-                          {el.from}
+                          {el.from === context.account ? 'me' : el.from}
                         </Link>
                       </TableCell>
                       <TableCell>
@@ -261,7 +269,7 @@ function TokenDetail() {
                           to={{
                             pathname: `https://rinkeby.etherscan.io/address/${el.from}`,
                           }}>
-                          {el.to}
+                          {el.to === context.account ? 'me' : el.to}
                         </Link>
                       </TableCell>
                       <TableCell>
