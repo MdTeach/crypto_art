@@ -9,7 +9,7 @@ export interface TranferType {
 const getTransactionHistory = async (contract: Contract, tokenId: string) => {
   try {
     const datas = await contract.getPastEvents('Transfer', {
-      filter: {tokenId: '0'},
+      filter: {tokenId: tokenId},
       fromBlock: 0,
       toBlock: 'latest',
     });

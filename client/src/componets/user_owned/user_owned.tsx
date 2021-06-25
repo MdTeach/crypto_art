@@ -6,14 +6,8 @@ import {MetaDataIndexed} from '../../utils/MetaData';
 import {Link} from 'react-router-dom';
 import Loading from '../helpers/loading';
 
-import React from 'react';
 import {makeStyles, createStyles, Theme} from '@material-ui/core/styles';
-import Grid, {GridSpacing} from '@material-ui/core/Grid';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Radio from '@material-ui/core/Radio';
-import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,7 +28,7 @@ function OwnedLayout() {
   const [ownedTokens, setOwnedTokens] = useState<UserTokens>([]);
   const [data, setData] = useState<MetaDataIndexed[]>([]);
   const [isFetching, setIsFetching] = useState(true);
-  const [isEmpty, setIsEmpty] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(false);
 
   const context = useContext(Web3Context);
 
@@ -100,7 +94,9 @@ function OwnedLayout() {
   }
   return (
     <div style={{maxWidth: '80%', position: 'relative'}}>
-      <h1 style={{textAlign: 'center', padding: '1em'}}>Your Tokens:</h1>
+      <h1 style={{textAlign: 'center', padding: '1em'}}>
+        <u>Your Tokens:</u>
+      </h1>
       <Grid container className={classes.root} spacing={5}>
         <Grid item xs={12}>
           <Grid container justify="center" spacing={5}>
@@ -129,23 +125,6 @@ function OwnedLayout() {
       </Grid>
     </div>
   );
-}
-{
-  /* <div style={{textAlign: 'center'}}>
-  <h1>Your nfts</h1>
-  {data.map((el) => (
-    <div key={el.image}>
-      <img src={el.image} alt={el.name} style={{width: 150, height: 150}} />
-      <div>Name: {el.name}</div>
-      <div>Token Id: {el.token_id}</div>
-      <div>Artist: {el.properties.artist}</div>
-      <Link to={`/detail/${el.token_id}`}>View in detail</Link>
-      <br />
-      <br />
-      <br />
-    </div>
-  ))}
-</div>; */
 }
 
 export default OwnedLayout;
