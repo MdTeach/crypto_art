@@ -4,6 +4,8 @@ import Web3Context from '../../contexts/Web3Context';
 import {useParams, Redirect} from 'react-router-dom';
 import SellLayout from './sell_layout';
 
+import Loading from '../helpers/loading';
+
 interface RouteParams {
   token_id: string;
 }
@@ -45,7 +47,7 @@ function TokenDetail() {
   return (
     <>
       {loading ? (
-        <p>redirecting</p>
+        <Loading />
       ) : (
         <>
           {!isValid || hasErr ? (

@@ -4,6 +4,7 @@ import {useHistory} from 'react-router-dom';
 import Web3Context from '../../contexts/Web3Context';
 import useTokenInfo from '../../hooks/tokenInfo';
 
+import Loading from '../helpers/loading';
 interface Props {
   token_id: string;
 }
@@ -58,7 +59,7 @@ const SellLayout = ({token_id}: Props) => {
   return (
     <div>
       {isLoading ? (
-        <h3>Loading...</h3>
+        <Loading />
       ) : (
         <>
           <div style={{display: 'flex', padding: '1em'}}>

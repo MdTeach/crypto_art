@@ -16,8 +16,11 @@ import OwnedLayout from './componets/user_owned/user_owned';
 import TokenDetail from './componets/token_details/token_details';
 import SellRoute from './componets/token_sales/sell_route';
 
+import MetaMaskMissing from './componets/use_wallet/provider_error';
+import Loading from './componets/helpers/loading';
+
 function App() {
-  const {isLoading, web3, account} = useWeb3();
+  const {isLoading, web3, account, hasMetamask} = useWeb3();
   const [nftContract, setNftContract] = useState<Contract>();
   const [nftContractAddress, setNftContractAddress] = useState('');
   const [tradeContract, setTradeContract] = useState<Contract>();
@@ -57,8 +60,11 @@ function App() {
     })();
   }, [web3]);
 
+  if (!isLoading && !hasMetamask) {
+    return <MetaMaskMissing />;
+  }
   if (isLoading || !isConfigured) {
-    return <h1>Loading ..</h1>;
+    return <Loading />;
   }
 
   return (

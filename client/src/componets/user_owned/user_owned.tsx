@@ -5,6 +5,8 @@ import Web3Context from '../../contexts/Web3Context';
 import {MetaDataIndexed} from '../../utils/MetaData';
 import {Link} from 'react-router-dom';
 
+import Loading from '../helpers/loading';
+
 type UserTokens = Array<string>;
 
 function OwnedLayout() {
@@ -61,11 +63,11 @@ function OwnedLayout() {
     })();
   }, [ownedTokens, isEmpty]);
 
+  if (isFetching) {
+    return <Loading />;
+  }
   if (isEmpty) {
     return <h1>Empty</h1>;
-  }
-  if (isFetching) {
-    return <h1>Fetching...</h1>;
   }
   return (
     <div style={{textAlign: 'center'}}>

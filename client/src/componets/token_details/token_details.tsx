@@ -9,6 +9,8 @@ import {getTransactionHistory, TranferType} from '../../utils/TransferHistory';
 import {useState} from 'react';
 import {useEffect} from 'react';
 
+import Loading from '../helpers/loading';
+
 const IsInValidId = (id: string) => isNaN(parseInt(id));
 // const ETHER = Math.pow(10, 18);
 
@@ -85,7 +87,7 @@ function TokenDetail() {
   return (
     <div style={{textAlign: 'center'}}>
       {isLoading ? (
-        <div>Loading...</div>
+        <Loading />
       ) : (
         <div>
           <h1>Token Detail</h1>

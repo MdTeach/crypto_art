@@ -6,6 +6,7 @@ type state = {
   isLoading: boolean;
   web3: Web3 | null;
   account: string;
+  hasMetamask: boolean;
 };
 
 type Window = any;
@@ -15,6 +16,7 @@ const Hooks = (): state => {
   const [state, setState] = useState<state>({
     isLoading: true,
     web3: null,
+    hasMetamask: true,
     account: '',
   });
 
@@ -40,16 +42,17 @@ const Hooks = (): state => {
           web3,
           account: accounts[0],
         });
-      } catch {
+      } catch (e) {
         setState({
           ...state,
+          hasMetamask: false,
           isLoading: false,
         });
       }
     })();
   }, [state]);
 
-  const {isLoading, web3, account} = state;
-  return {isLoading, web3, account};
+  const {isLoading, web3, account, hasMetamask} = state;
+  return {isLoading, web3, account, hasMetamask};
 };
 export default Hooks;
