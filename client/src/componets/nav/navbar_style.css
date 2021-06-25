@@ -1,0 +1,43 @@
+.navbar {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.navbar-dark {
+  color: white;
+}
+
+.logo1 {
+  width: 150px;
+  height: 48px;
+}
+
+.navbar-nav > li {
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+  padding-right: 5px;
+}
+
+.navbar-brand {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 1.5em;
+}
+
+.navbar {
+  min-height: 32px;
+}
+
+/* Larger devices (landscape phones, 576px and up) */
+@media (min-width: 321px) {
+  .navbar-nav {
+    float: right;
+    padding-right: 10em;
+  }
+
+  .logo1 {
+    padding-left: 2em;
+    width: 100px;
+    height: 64px;
+  }
+}

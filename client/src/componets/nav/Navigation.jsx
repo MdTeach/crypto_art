@@ -1,27 +1,51 @@
 import {
-  Route,Link
+  Link,
+  NavLink
 } from "react-router-dom";
 
-export default function App() {
+import "./navbar_style.css";
+
+const NavBar = () => {
   return (
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
+    <nav className="navbar navbar-expand navbar-dark">
+      <Link className="navbar-brand" to="/">
+        <div className="col-6">
+          <h2>Crypto Art</h2>
+          {/* <img className="logo1" src="https://avatars.githubusercontent.com/u/19630321?v=4" alt="Stopify" /> */}
+        </div>
+      </Link>
+      <button
+        className="navbar-toggler"
+        data-toggle="collapse"
+        data-target="#collapse_target"
+      >
+        <span className="navbar-toggler-icon"></span>
+      </button>
+
+      <div className="collapse navbar-collapse" id="collapse_target">
+        <div className="col-12">
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/create">
+                Create
+              </NavLink>
             </li>
-            <li>
-              <Link to="/create">Create</Link>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/explore">
+                Explore
+              </NavLink>
             </li>
-            <li>
-              <Link to="/explore">Explore</Link>
-            </li>
-            <li>
-              <Link to="/mine">My Collectibles</Link>
+            <li className="nav-item">
+              <NavLink to="/mine" className="nav-link">
+                My Collectibles
+              </NavLink>
             </li>
           </ul>
-        </nav>
-
+        </div>
       </div>
+    </nav>
   );
-}
+};
+
+export default NavBar
+

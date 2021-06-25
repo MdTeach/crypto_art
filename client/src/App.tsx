@@ -76,6 +76,9 @@ function App() {
           <Nav />
           <Switch>
             <Route exact path="/">
+              <h1>Home Page</h1>
+            </Route>
+            <Route exact path="/mine">
               <OwnedLayout />
             </Route>
             <Route exact path="/create">
