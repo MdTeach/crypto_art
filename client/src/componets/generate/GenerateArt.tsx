@@ -19,6 +19,9 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import imageHolder from './empty_image.png';
 
+const DATA_END_POINT = 'https://crypto-art-backend.herokuapp.com/';
+// const DATA_END_POINT ='http://127.0.0.1:5000/'
+
 interface ImageRes {
   image: string;
 }
@@ -41,10 +44,13 @@ function GenerateArtLayout() {
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
   const [minting, setIsMinting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const fetchImage = async () => {
-    const response = await axios.get('http://127.0.0.1:5000/');
+    setIsGenerating(true);
+    const response = await axios.get(DATA_END_POINT);
     const imageData: ImageRes = response.data;
+    setIsGenerating(false);
     setImage(imageData.image);
   };
 
@@ -114,6 +120,7 @@ function GenerateArtLayout() {
   return (
     <>
       {minting ? <Loading /> : null}
+      {isGenerating ? <Loading /> : null}
       <div
         style={{
           display: 'flex',
