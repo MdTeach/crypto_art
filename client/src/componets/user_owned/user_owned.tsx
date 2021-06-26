@@ -93,7 +93,7 @@ function OwnedLayout() {
     );
   }
   return (
-    <div style={{maxWidth: '80%', position: 'relative'}}>
+    <div style={{maxWidth: '95%', position: 'relative'}}>
       <h1 style={{textAlign: 'center', padding: '1em'}}>
         <u>Your Tokens:</u>
       </h1>

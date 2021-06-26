@@ -82,7 +82,7 @@ function App() {
           <Nav />
           <Switch>
             <Route exact path="/">
-              <h1>Home Page</h1>
+              <ExploreLayout />
             </Route>
             <Route exact path="/mine">
               <OwnedLayout />
