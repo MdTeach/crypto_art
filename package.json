@@ -7,8 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "migrate":"truffle migrate --reset",
-    "rink":"truffle migrate --network rinkeby --reset --compile-none"
+    "migrate": "truffle migrate --reset",
+    "rink": "truffle migrate --network rinkeby --reset --compile-none"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "@truffle/hdwallet-provider": "^1.4.1"
   },
   "dependencies": {
-    "chai": "^4.3.4"
+    "chai": "^4.3.4",
+    "client": "file:client"
   }
 }
