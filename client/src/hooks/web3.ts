@@ -27,6 +27,10 @@ const Hooks = (): state => {
         window.ethereum.on('accountsChanged', function () {
           window.location.reload();
         });
+
+        window.ethereum.on('chainChanged', function () {
+          window.location.reload();
+        });
       }
     });
   }, []);
