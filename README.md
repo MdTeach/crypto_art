@@ -5,6 +5,7 @@ A simple ART generation NFT platform where image is genrated by the AI model.
 ## Demo
 
 (video thumbnail below)
+<br>
 [![Video](https://img.youtube.com/vi/PZ4mBEuT730/0.jpg)](https://www.youtube.com/watch?v=PZ4mBEuT730)
 
 ## Setup GuideLines
