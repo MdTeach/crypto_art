@@ -189,6 +189,13 @@ function TokenDetail() {
               <div>
                 <b>Artist:</b> {metadata?.properties.artist}
               </div>
+              <br />
+              <div>
+                <b>Model Hash:</b> SHA1 {metadata?.properties.modelHash}
+              </div>
+              <div>
+                <b>Inference Time:</b> {metadata?.properties.inferenceTime}
+              </div>
 
               <br />
               {!isOwner() && isForSale() ? (

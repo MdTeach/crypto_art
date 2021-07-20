@@ -24,6 +24,8 @@ const DATA_END_POINT = 'https://crypto-art-backend.herokuapp.com/';
 
 interface ImageRes {
   image: string;
+  hash: string;
+  inference_time: string;
 }
 
 const useStyles = makeStyles({
@@ -42,6 +44,8 @@ function GenerateArtLayout() {
   const history = useHistory();
 
   const [image, setImage] = useState('');
+  const [modelHash, setModelHash] = useState('');
+  const [inferTime, setInferTime] = useState('');
   const [name, setName] = useState('');
   const [minting, setIsMinting] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -52,6 +56,8 @@ function GenerateArtLayout() {
     const imageData: ImageRes = response.data;
     setIsGenerating(false);
     setImage(imageData.image);
+    setModelHash(imageData.hash);
+    setInferTime(imageData.inference_time);
   };
 
   const getTokenId = (txn: any) => {
@@ -77,7 +83,8 @@ function GenerateArtLayout() {
       image: `https://ipfs.io/ipfs/${imagePath}`,
       properties: {
         artist: 'AI Model',
-        inferenceTime: '10ms',
+        inferenceTime: inferTime,
+        modelHash: modelHash,
       },
     };
     console.log(metaData.image);

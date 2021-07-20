@@ -3,6 +3,7 @@ interface MetaData {
   image: string;
   properties: {
     artist: string;
+    modelHash: string;
     inferenceTime: string | number;
   };
 }
